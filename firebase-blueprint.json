@@ -1,0 +1,569 @@
+{
+  "entities": {
+    "admin": {
+      "title": "Admin",
+      "description": "Administrator account with role-based access control and active status",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the administrator",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the administrator",
+          "maxLength": 160
+        },
+        "role": {
+          "type": "string",
+          "description": "Permission level: superadmin or admin",
+          "enum": ["superadmin", "admin"]
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Whether the admin is currently active and authorized"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "UID of the creator or system"
+        },
+        "bootstrapStatus": {
+          "type": "string",
+          "description": "Status during bootstrap onboarding",
+          "enum": ["PENDING_CLAIMS", "COMPLETED"]
+        }
+      },
+      "required": ["uid", "email", "role", "active"]
+    },
+    "superAdminGuard": {
+      "title": "SuperAdminGuard",
+      "description": "Concurrency guard to guarantee at least one active superadmin exists",
+      "type": "object",
+      "properties": {
+        "activeSuperAdminCount": {
+          "type": "number",
+          "description": "Total count of active superadmins"
+        },
+        "activeSuperAdminUids": {
+          "type": "array",
+          "description": "UIDs of currently active superadmins"
+        },
+        "version": {
+          "type": "number",
+          "description": "Optimistic concurrency version counter"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        }
+      },
+      "required": ["activeSuperAdminCount", "version"]
+    },
+    "bootstrap": {
+      "title": "Bootstrap",
+      "description": "Initialization status and immutable lockout lock for Victoria Lar",
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Lifecycle state of the initialization process",
+          "enum": ["UNINITIALIZED", "IN_PROGRESS", "COMPLETED"]
+        },
+        "bootstrapId": {
+          "type": "string",
+          "description": "Unique run ID of the bootstrap execution",
+          "maxLength": 128
+        },
+        "superAdminUid": {
+          "type": "string",
+          "description": "UID of the initial superadmin",
+          "maxLength": 128
+        },
+        "startedAt": {
+          "type": "number",
+          "description": "Epoch timestamp of start"
+        },
+        "expiresAt": {
+          "type": "number",
+          "description": "Epoch timestamp when reservation expires if crashed"
+        },
+        "completedAt": {
+          "type": "number",
+          "description": "Epoch timestamp of completion"
+        },
+        "lockedPermanently": {
+          "type": "boolean",
+          "description": "Whether the bootstrap process is sealed forever"
+        }
+      },
+      "required": ["status", "lockedPermanently"]
+    },
+    "service": {
+      "title": "Service",
+      "description": "Senior care service offering published or draft in Victoria Lar Residencial",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the service",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the service",
+          "maxLength": 150
+        },
+        "summary": {
+          "type": "string",
+          "description": "Short summary displayed on public cards",
+          "maxLength": 300
+        },
+        "description": {
+          "type": "string",
+          "description": "Full detailed description of care and benefits",
+          "maxLength": 3000
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon identifier (e.g. HeartPulse, ShieldCheck, Stethoscope)",
+          "maxLength": 64
+        },
+        "category": {
+          "type": "string",
+          "description": "Category: assistencial, saude, hotelaria, lazer",
+          "maxLength": 64
+        },
+        "order": {
+          "type": "number",
+          "description": "Display order index"
+        },
+        "status": {
+          "type": "string",
+          "description": "Publication state: draft or published",
+          "enum": ["draft", "published"]
+        },
+        "highlight": {
+          "type": "boolean",
+          "description": "Whether this service is highlighted on homepage"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "UID of administrator who updated the service"
+        }
+      },
+      "required": ["id", "title", "summary", "status", "order"]
+    },
+    "institutionalContent": {
+      "title": "InstitutionalContent",
+      "description": "Editable texts, coordinates and institutional presentation",
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Content section key (e.g., hero, about, values, contact)",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Section header title",
+          "maxLength": 200
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Section header subtitle",
+          "maxLength": 500
+        },
+        "body": {
+          "type": "string",
+          "description": "Rich descriptive text or story",
+          "maxLength": 5000
+        },
+        "phone": {
+          "type": "string",
+          "description": "Primary institutional phone",
+          "maxLength": 30
+        },
+        "whatsapp": {
+          "type": "string",
+          "description": "WhatsApp contact number",
+          "maxLength": 30
+        },
+        "email": {
+          "type": "string",
+          "description": "Institutional email",
+          "maxLength": 160
+        },
+        "address": {
+          "type": "string",
+          "description": "Physical address of Victoria Lar",
+          "maxLength": 300
+        },
+        "visitingHours": {
+          "type": "string",
+          "description": "Visiting schedule hours",
+          "maxLength": 200
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Custom hero facade or facility showcase image URL",
+          "maxLength": 2000
+        },
+        "imageCaption": {
+          "type": "string",
+          "description": "Caption or tag for the photo (or name of person)",
+          "maxLength": 200
+        },
+        "role": {
+          "type": "string",
+          "description": "Role or professional title of the person",
+          "maxLength": 200
+        },
+        "quote": {
+          "type": "string",
+          "description": "Highlight quote or core philosophy statement",
+          "maxLength": 2000
+        },
+        "tag": {
+          "type": "string",
+          "description": "Category or badge pill tag",
+          "maxLength": 200
+        },
+        "meetingLink": {
+          "type": "string",
+          "description": "Default Google Meet or online meeting link",
+          "maxLength": 500
+        },
+        "availableHours": {
+          "type": "string",
+          "description": "Comma-separated available hours for scheduling",
+          "maxLength": 500
+        },
+        "meetingDuration": {
+          "type": "string",
+          "description": "Standard duration for meetings",
+          "maxLength": 100
+        },
+        "whatsappMessage": {
+          "type": "string",
+          "description": "Pre-filled default WhatsApp message text",
+          "maxLength": 1000
+        },
+        "emailSubject": {
+          "type": "string",
+          "description": "Subject line for confirmation email",
+          "maxLength": 200
+        },
+        "emailInstructions": {
+          "type": "string",
+          "description": "Special guidance or notes included in confirmation email",
+          "maxLength": 2000
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last modification"
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "UID of administrator who modified content"
+        }
+      },
+      "required": ["key", "title"]
+    },
+    "contactLead": {
+      "title": "ContactLead",
+      "description": "Inquiry or tour booking lead from prospective residents and families",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Lead identifier",
+          "maxLength": 128
+        },
+        "name": {
+          "type": "string",
+          "description": "Contact person name",
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "description": "Contact email",
+          "maxLength": 160
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone or WhatsApp",
+          "maxLength": 30
+        },
+        "relationship": {
+          "type": "string",
+          "description": "Relationship to future resident (e.g., son, daughter, self)",
+          "maxLength": 60
+        },
+        "serviceInterest": {
+          "type": "string",
+          "description": "Service of primary interest",
+          "maxLength": 100
+        },
+        "message": {
+          "type": "string",
+          "description": "Inquiry message or specific care needs",
+          "maxLength": 2000
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the lead: unread, read, contacted, scheduled, archived",
+          "enum": ["unread", "read", "contacted", "scheduled", "archived"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Internal administrative notes",
+          "maxLength": 2000
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of submission"
+        },
+        "scheduledDate": {
+          "type": "string",
+          "description": "Date chosen for meeting or visit (YYYY-MM-DD)",
+          "maxLength": 20
+        },
+        "scheduledTime": {
+          "type": "string",
+          "description": "Time slot chosen for meeting or visit (HH:MM)",
+          "maxLength": 20
+        },
+        "meetingLink": {
+          "type": "string",
+          "description": "Google Meet or visit link generated for this appointment",
+          "maxLength": 500
+        },
+        "type": {
+          "type": "string",
+          "description": "Intake channel type: meeting, form, whatsapp",
+          "enum": ["meeting", "form", "whatsapp"]
+        }
+      },
+      "required": ["name", "phone", "status"]
+    },
+    "auditLog": {
+      "title": "AuditLog",
+      "description": "Immutable audit trail of administrative activities",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Audit entry ID",
+          "maxLength": 128
+        },
+        "action": {
+          "type": "string",
+          "description": "Action performed (e.g., USER_INVITED, SERVICE_PUBLISHED, STATUS_CHANGED)",
+          "maxLength": 80
+        },
+        "performedByUid": {
+          "type": "string",
+          "description": "UID of the actor",
+          "maxLength": 128
+        },
+        "performedByEmail": {
+          "type": "string",
+          "description": "Email of the actor",
+          "maxLength": 160
+        },
+        "targetResource": {
+          "type": "string",
+          "description": "Resource identifier or path impacted",
+          "maxLength": 200
+        },
+        "details": {
+          "type": "string",
+          "description": "Summary of parameters or diff",
+          "maxLength": 1000
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO timestamp of event"
+        }
+      },
+      "required": ["id", "action", "performedByUid", "timestamp"]
+    },
+    "structureAlbum": {
+      "title": "StructureAlbum",
+      "description": "Photo album associated with a specific facility structure topic",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Topic album identifier (e.g., quartos-seguros, jardins-area-verde)",
+          "maxLength": 64
+        },
+        "topicKey": {
+          "type": "string",
+          "description": "Unique key linking to the landing page structure topic",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Display title of the structure album",
+          "maxLength": 150
+        },
+        "description": {
+          "type": "string",
+          "description": "Editorial description of the facility section and its amenities",
+          "maxLength": 1000
+        },
+        "coverImageUrl": {
+          "type": "string",
+          "description": "Optional featured cover photo URL",
+          "maxLength": 2000
+        },
+        "order": {
+          "type": "number",
+          "description": "Display order index"
+        },
+        "status": {
+          "type": "string",
+          "description": "Publication status: draft or published",
+          "enum": ["draft", "published"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "UID of administrator who updated the album"
+        }
+      },
+      "required": ["id", "topicKey", "title"]
+    },
+    "structurePhoto": {
+      "title": "StructurePhoto",
+      "description": "High resolution photograph belonging to a structure album",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Photo identifier",
+          "maxLength": 128
+        },
+        "albumId": {
+          "type": "string",
+          "description": "Parent album ID",
+          "maxLength": 64
+        },
+        "url": {
+          "type": "string",
+          "description": "Direct download URL from Firebase Storage or verified host",
+          "maxLength": 2000
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "Type of media item: image or video",
+          "enum": ["image", "video"]
+        },
+        "storagePath": {
+          "type": "string",
+          "description": "Firebase Storage object path for lifecycle and orphan management",
+          "maxLength": 500
+        },
+        "title": {
+          "type": "string",
+          "description": "Descriptive title or caption of the photograph",
+          "maxLength": 150
+        },
+        "caption": {
+          "type": "string",
+          "description": "Optional additional detail about the room, equipment or area",
+          "maxLength": 500
+        },
+        "altText": {
+          "type": "string",
+          "description": "Accessible descriptive alternative text for screen readers",
+          "maxLength": 200
+        },
+        "order": {
+          "type": "number",
+          "description": "Display order sequence inside the album"
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Whether the photo is visible to public visitors or reserved for admin review"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        },
+        "updatedBy": {
+          "type": "string",
+          "description": "UID of administrator who uploaded or modified the photo"
+        }
+      },
+      "required": ["id", "albumId", "url", "altText", "order", "published"]
+    }
+  },
+  "firestore": {
+    "/system/bootstrap": {
+      "schema": { "$ref": "#/entities/bootstrap" },
+      "description": "Permanent system initialization and bootstrap lock"
+    },
+    "/system/superAdminGuard": {
+      "schema": { "$ref": "#/entities/superAdminGuard" },
+      "description": "Optimistic concurrency guard ensuring active superadmin count"
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/admin" },
+      "description": "Authorized administrators with role and active status"
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/service" },
+      "description": "Institutional care services list with draft/published state"
+    },
+    "/content/{contentKey}": {
+      "schema": { "$ref": "#/entities/institutionalContent" },
+      "description": "Institutional landing page contents and contacts"
+    },
+    "/leads/{leadId}": {
+      "schema": { "$ref": "#/entities/contactLead" },
+      "description": "Private contact inquiries and visit requests"
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/auditLog" },
+      "description": "Immutable administrative audit trail"
+    },
+    "/albums/{albumId}": {
+      "schema": { "$ref": "#/entities/structureAlbum" },
+      "description": "Facility structure albums for each topic"
+    },
+    "/albums/{albumId}/photos/{photoId}": {
+      "schema": { "$ref": "#/entities/structurePhoto" },
+      "description": "Photos belonging to each facility structure album"
+    }
+  }
+}

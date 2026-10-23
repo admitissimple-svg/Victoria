@@ -1,0 +1,6 @@
+{
+  "name": "Victoria Lar Residencial",
+  "description": "Landing page institucional e painel administrativo da Victoria Lar Residencial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
